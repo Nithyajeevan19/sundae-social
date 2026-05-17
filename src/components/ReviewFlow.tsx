@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { AnimatedButton } from "./AnimatedButton";
 import { Instagram, Star, Share2 } from "lucide-react";
 
-const INSTAGRAM_URL = "https://instagram.com/sundaesocial";
+const INSTAGRAM_URL = "https://www.instagram.com/sundaesocial.in?igsh=eHJ4ejZ1aWJ1cjFz";
 const GOOGLE_REVIEW_URL = "https://g.page/r/sundaesocial/review";
 
 export function ReviewFlow({ onDone }: { onDone: () => void }) {
