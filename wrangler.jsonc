@@ -1,0 +1,6 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sundae-social",
+  "compatibility_date": "2025-05-17",
+  "compatibility_flags": ["nodejs_compat"]
+}
