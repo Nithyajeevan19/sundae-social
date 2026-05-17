@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { AnimatedButton } from "./AnimatedButton";
 import { Instagram, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 
 export interface QuizResult {
   title: string;
@@ -9,6 +10,8 @@ export interface QuizResult {
   gradient: string;
 }
 
+const INSTAGRAM_URL = "https://www.instagram.com/sundaesocial.in?igsh=eHJ4ejZ1aWJ1cjFz";
+
 export function QuizResultCard({
   result,
   onRestart,
@@ -16,6 +19,32 @@ export function QuizResultCard({
   result: QuizResult;
   onRestart: () => void;
 }) {
+  const handleShare = async () => {
+    const textToCopy = `I got ${result.title} (${result.emoji}) on Sundae Social! Find yours at @sundaesocial 🍨✨`;
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      toast.success("Caption copied! Opening Instagram Story...", {
+        description: "Paste it and tag @sundaesocial!",
+        duration: 3000,
+      });
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+    }
+
+    setTimeout(() => {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+      const isAndroid = /Android/.test(navigator.userAgent);
+      
+      if (isIOS) {
+        window.location.href = "instagram://story-camera";
+      } else if (isAndroid) {
+        window.location.href = "intent://story-camera#Intent;package=com.instagram.android;scheme=instagram;end";
+      } else {
+        window.open(INSTAGRAM_URL, "_blank");
+      }
+    }, 600);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -42,10 +71,10 @@ export function QuizResultCard({
       </div>
 
       <div className="mt-5 space-y-2">
-        <AnimatedButton variant="primary" fullWidth>
+        <AnimatedButton variant="primary" fullWidth onClick={handleShare}>
           <Instagram size={18} /> Share on Story
         </AnimatedButton>
-        <AnimatedButton variant="cream" fullWidth>
+        <AnimatedButton variant="cream" fullWidth onClick={() => window.open(INSTAGRAM_URL, "_blank")}>
           Follow Us
         </AnimatedButton>
         <AnimatedButton variant="ghost" fullWidth onClick={onRestart}>

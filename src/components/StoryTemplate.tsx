@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { AnimatedButton } from "./AnimatedButton";
 import { Share2, Instagram } from "lucide-react";
+import { toast } from "sonner";
+
+const INSTAGRAM_URL = "https://www.instagram.com/sundaesocial.in?igsh=eHJ4ejZ1aWJ1cjFz";
 
 export function StoryTemplate({
   caption = "I just tried Sundae Social 🍨",
@@ -9,6 +12,32 @@ export function StoryTemplate({
   caption?: string;
   subtitle?: string;
 }) {
+  const handleShare = async () => {
+    const textToCopy = `${caption} — ${subtitle} ✨`;
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      toast.success("Caption copied! Opening Instagram Story...", {
+        description: "Paste it and tag @sundaesocial!",
+        duration: 3000,
+      });
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+    }
+
+    setTimeout(() => {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+      const isAndroid = /Android/.test(navigator.userAgent);
+      
+      if (isIOS) {
+        window.location.href = "instagram://story-camera";
+      } else if (isAndroid) {
+        window.location.href = "intent://story-camera#Intent;package=com.instagram.android;scheme=instagram;end";
+      } else {
+        window.open(INSTAGRAM_URL, "_blank");
+      }
+    }, 600);
+  };
+
   return (
     <div className="rounded-3xl bg-card p-5 shadow-soft">
       <p className="mb-3 text-center text-xs font-medium uppercase tracking-widest text-muted-foreground">
@@ -56,10 +85,10 @@ export function StoryTemplate({
       </motion.div>
 
       <div className="mt-5 space-y-2">
-        <AnimatedButton variant="primary" fullWidth>
+        <AnimatedButton variant="primary" fullWidth onClick={handleShare}>
           <Share2 size={18} /> Share to Story
         </AnimatedButton>
-        <AnimatedButton variant="cream" fullWidth>
+        <AnimatedButton variant="cream" fullWidth onClick={() => window.open(INSTAGRAM_URL, "_blank")}>
           <Instagram size={18} /> Tag @sundaesocial
         </AnimatedButton>
       </div>
